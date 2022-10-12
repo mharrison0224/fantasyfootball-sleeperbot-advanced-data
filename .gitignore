@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# project files & configuration
+output/
+credential.json
+config_settings.json
+
 # C extensions
 *.so
 
