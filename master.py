@@ -37,8 +37,7 @@ if discord_integration.lower() == "true" :
         discord_integration = "false"
 
 if google_integration.lower() == "true" :
-    spreadsheetname = config_settings["google_sheet_name"]
-    shareemail = config_settings["google_sheet_share_email"]
+    spreadsheetid = config_settings["google_sheet_id"]
 
 # Get NFL State & Current Week
 response = requests.get("https://api.sleeper.app/v1/state/nfl")
@@ -47,7 +46,7 @@ week = nflstate["week"]
 currentweek = nflstate["week"]
 lastweek = week - 1
 
-getusers = requests.get("https://api.sleeper.app/v1/league/784654068411998208/users")
+getusers = requests.get("https://api.sleeper.app/v1/league/%s/users" % league_id)
 users = getusers.json()
 
 # Get Roster & League Data that will be used in further defs
@@ -224,8 +223,6 @@ if discord_integration.lower() == "true" :
     title = ("Week "+ str(lastweek) + " automation")
     object.post_discord_message(discordurl, message, title, botname)
 
-# Variables definition
-
 # Dump Data to Google Sheets if integration is enabled
 if google_integration.lower() == "true" :
 
@@ -248,78 +245,76 @@ if google_integration.lower() == "true" :
     
     # Test if spreadsheet is created
     try :
-        spreadsheet = client.open(spreadsheetname)
-        createSpreadsheet = False
+        spreadsheet = client.open_by_key(spreadsheetid)
+        spreadsheet_test = True
     except gspread.exceptions.SpreadsheetNotFound:
-        print("Spreadsheet not found, attempting to create one")
-        createSpreadsheet = True
-
-    if createSpreadsheet == True :
-        print("Creating spreadsheet as it was not found")
-        spreadsheet = client.create(spreadsheetname)
-        #spreadsheet.share(shareemail, perm_type='user', role='writer')
-        spreadsheet = client.open(spreadsheetname)
-
-    spreadsheetId = spreadsheet.id
-    worksheet_list = spreadsheet.worksheets()
-    print ("Printing List of worksheets")
-    print (worksheet_list)
-
-    # Checking to see if any worksheets need to be created, update worksheets afterwards
-    if MedianRankingsWorkSheetName not in str(worksheet_list) :
-        print("Count Not Find Median Rankings Sheet, creating sheet")
-        spreadsheet.add_worksheet(title=MedianRankingsWorkSheetName, rows="1000", cols="20")
-        print("Created Median Rankings, Updating the worksheet")
-        spreadsheet.values_update(MedianRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(median_rankings_csv)))})
-    else :
-        print("Found Median Rankings, Updating the worksheet")
-        spreadsheet.values_update(MedianRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(median_rankings_csv)))})
-
-    if AvgPtsForWorkSheetName not in str(worksheet_list) :
-        print("Count Not Find Average Points Sheet, creating sheet")
-        spreadsheet.add_worksheet(title=AvgPtsForWorkSheetName, rows="1000", cols="20")
-        print("Created Average Points Sheet, Updating the worksheet")
-        spreadsheet.values_update(AvgPtsForWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(avg_pts_for_csv)))})
-    else :
-        print("Found Median Rankings, Updating the worksheet")
-        spreadsheet.values_update(AvgPtsForWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(avg_pts_for_csv)))})
-
-    if WeekLuckWorkSheetName not in str(worksheet_list) :
-        print("Count Not Find WeekLuckRankings Sheet, creating sheet")
-        spreadsheet.add_worksheet(title=WeekLuckWorkSheetName, rows="1000", cols="20")
-        print("Created Week Luck Sheet, updating the worksheet")
-        spreadsheet.values_update(WeekLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(week_luck_csv)))})
-    else :
-        print("Found Week Luck Sheet, updating the worksheet")
-        spreadsheet.values_update(WeekLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(week_luck_csv)))})
-
-    if SeasonLuckWorkSheetName not in str(worksheet_list) :
-        print("Count Not Find SeasonLuckRankings Sheet, creating sheet")
-        spreadsheet.add_worksheet(title=SeasonLuckWorkSheetName, rows="1000", cols="20")
-        print("Created Season Luck Worksheet, updating worksheet")
-        spreadsheet.values_update(SeasonLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(season_luck_csv)))})
-    else: 
-        print("Found Season Luck Worksheet, updating worksheet")
-        spreadsheet.values_update(SeasonLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(season_luck_csv)))})
-
-    if LeagueRankingsWorkSheetName not in str(worksheet_list) :
-        print("Count Not Find SeasonLuckRankings Sheet, creating sheet")
-        spreadsheet.add_worksheet(title=LeagueRankingsWorkSheetName, rows="1000", cols="20")
-        print("Created League Rankings Worksheet, updating worksheet")
-        spreadsheet.values_update(LeagueRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(league_record_csv)))})
-    else: 
-        print("Found League Rankings Worksheet, updating worksheet")
-        spreadsheet.values_update(LeagueRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(league_record_csv)))})
-
-    if WeeklySheetName not in str(worksheet_list) :
-        print("Count Not Find Week Sheet, creating sheet")
-        spreadsheet.add_worksheet(title=WeeklySheetName, rows="1000", cols="20")
-        print("Created Week%s Worksheet, updating worksheet" % week)
-        spreadsheet.values_update(WeeklySheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(csvfile)))})
-    else: 
-        print("Found Week%s Worksheet, updating worksheet" % week)
-        spreadsheet.values_update(WeeklySheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(csvfile)))})
+        print("Spreadsheet not found, create one, update the config_settings.json file with spreadsheet id")
+        spreadsheet_test = False
     
+    if spreadsheet_test == True :
+        spreadsheetId = spreadsheet.id
+        worksheet_list = spreadsheet.worksheets()
+        print ("Printing List of worksheets")
+        print (worksheet_list)
+
+        # Checking to see if any worksheets need to be created, update worksheets afterwards
+        if MedianRankingsWorkSheetName not in str(worksheet_list) :
+            print("Count Not Find Median Rankings Sheet, creating sheet")
+            spreadsheet.add_worksheet(title=MedianRankingsWorkSheetName, rows="1000", cols="20")
+            print("Created Median Rankings, Updating the worksheet")
+            spreadsheet.values_update(MedianRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(median_rankings_csv)))})
+        else :
+            print("Found Median Rankings, Updating the worksheet")
+            spreadsheet.values_update(MedianRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(median_rankings_csv)))})
+
+        if AvgPtsForWorkSheetName not in str(worksheet_list) :
+            print("Count Not Find Average Points Sheet, creating sheet")
+            spreadsheet.add_worksheet(title=AvgPtsForWorkSheetName, rows="1000", cols="20")
+            print("Created Average Points Sheet, Updating the worksheet")
+            spreadsheet.values_update(AvgPtsForWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(avg_pts_for_csv)))})
+        else :
+            print("Found Median Rankings, Updating the worksheet")
+            spreadsheet.values_update(AvgPtsForWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(avg_pts_for_csv)))})
+
+        if WeekLuckWorkSheetName not in str(worksheet_list) :
+            print("Count Not Find WeekLuckRankings Sheet, creating sheet")
+            spreadsheet.add_worksheet(title=WeekLuckWorkSheetName, rows="1000", cols="20")
+            print("Created Week Luck Sheet, updating the worksheet")
+            spreadsheet.values_update(WeekLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(week_luck_csv)))})
+        else :
+            print("Found Week Luck Sheet, updating the worksheet")
+            spreadsheet.values_update(WeekLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(week_luck_csv)))})
+
+        if SeasonLuckWorkSheetName not in str(worksheet_list) :
+            print("Count Not Find SeasonLuckRankings Sheet, creating sheet")
+            spreadsheet.add_worksheet(title=SeasonLuckWorkSheetName, rows="1000", cols="20")
+            print("Created Season Luck Worksheet, updating worksheet")
+            spreadsheet.values_update(SeasonLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(season_luck_csv)))})
+        else: 
+            print("Found Season Luck Worksheet, updating worksheet")
+            spreadsheet.values_update(SeasonLuckWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(season_luck_csv)))})
+
+        if LeagueRankingsWorkSheetName not in str(worksheet_list) :
+            print("Count Not Find SeasonLuckRankings Sheet, creating sheet")
+            spreadsheet.add_worksheet(title=LeagueRankingsWorkSheetName, rows="1000", cols="20")
+            print("Created League Rankings Worksheet, updating worksheet")
+            spreadsheet.values_update(LeagueRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(league_record_csv)))})
+        else: 
+            print("Found League Rankings Worksheet, updating worksheet")
+            spreadsheet.values_update(LeagueRankingsWorkSheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(league_record_csv)))})
+
+        if WeeklySheetName not in str(worksheet_list) :
+            print("Count Not Find Week Sheet, creating sheet")
+            spreadsheet.add_worksheet(title=WeeklySheetName, rows="1000", cols="20")
+            print("Created Week%s Worksheet, updating worksheet" % week)
+            spreadsheet.values_update(WeeklySheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(csvfile)))})
+        else: 
+            print("Found Week%s Worksheet, updating worksheet" % week)
+            spreadsheet.values_update(WeeklySheetName, params={'valueInputOption': 'USER_ENTERED'},body={'values': list(csv.reader(open(csvfile)))})
+    else:
+        print("Issue getting spreadsheet, not updating google sheets")
+else :
+    print("Google Sheets Integration not enabled")
 
 
 
