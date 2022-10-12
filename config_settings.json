@@ -1,0 +1,8 @@
+{
+  "sleeperbot_league_id": "replaceWithLeagueID",
+  "discord_notifications": "false",
+  "discord_url": "replaceWithDiscordURL",
+  "discord_bot_name": "Discord Automation",
+  "google_sheets_integration": "false",
+  "google_sheet_id": "replaceWithGoogleSheetID"
+}
