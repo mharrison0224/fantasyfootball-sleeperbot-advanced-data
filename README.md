@@ -1,5 +1,7 @@
-![GitHub](https://img.shields.io/github/license/SwapnikKatkoori/sleeper-api-wrapper.svg?color=blue)
-![GitHub issues](https://img.shields.io/github/issues/mharrison0224/fantasyfootball-sleeperbot-metrics.svg?color=orange)
+![GitHub issues](https://img.shields.io/github/issues/mharrison0224/fantasyfootball-sleeperbot-advanced-data)
+![GitHub forks](https://img.shields.io/github/forks/mharrison0224/fantasyfootball-sleeperbot-advanced-data)
+![GitHub stars](https://img.shields.io/github/stars/mharrison0224/fantasyfootball-sleeperbot-advanced-data)
+![GitHub license](https://img.shields.io/github/license/mharrison0224/fantasyfootball-sleeperbot-advanced-data)
 # fantasyfootball-sleeperbot-advanced-data
 
 This repo is a simple python script that will pull in your league data from sleeperbot and build out some more advanced data sets to be used however.
