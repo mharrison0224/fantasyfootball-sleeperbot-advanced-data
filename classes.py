@@ -78,6 +78,7 @@ class Statistics ():
         for matchup in matchups :
             if matchup["roster_id"] == roster_id :
                 matchupid = matchup["matchup_id"]
+        
         # Get Their Score by matching matchup ID and then getting points
         for matchup in matchups :
             if matchup["matchup_id"] == matchupid :
@@ -107,6 +108,47 @@ class Statistics ():
             percent = -(luck * 100)
         return (percent)
 
+    def get_sos(self, roster_id, week, league, matchups) :
+
+        #matchups = league.get_matchups(week)
+        print("starting get_sos function")
+        matchupid = 0
+        theirscore = 0
+        myscore = 0
+        scoresobject = []
+        matchrank = 0
+
+        # Get the matchup ID that equals to the roster_id were testing
+        for matchup in matchups :
+            if matchup["roster_id"] == roster_id :
+                matchupid = matchup["matchup_id"]
+
+        # Get Their Score by matching matchup ID and then getting points
+        for matchup in matchups :
+            if matchup["matchup_id"] == matchupid :
+                if matchup["roster_id"] != roster_id :
+                    theirscore = matchup["points"]
+        
+        # Get Score for the roster ID set for this function
+        for matchup in matchups :  
+            if matchup["matchup_id"] == matchupid :  
+                if matchup["roster_id"] == roster_id :
+                    myscore = matchup["points"]
+        
+        for matchup in matchups :
+            if matchup["points"] != myscore :
+                scoresobject.append(matchup["points"])
+        
+        scores = sorted(scoresobject)
+        
+        for item in scores :
+            if item == theirscore :
+                print(item)
+                matchrank = scores.index(item)
+                print (matchrank)
+
+        return matchrank
+    
     def post_discord_message(self, discordurl, message, title, botname) :
         #for all params, see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
         data = {
@@ -165,6 +207,26 @@ class Statistics ():
         }
         return sheet.batch_update(body)
     
+    def get_trade_value(self) :
+        print("Future value ideas for trades")
+        # Get each team in the trade
+        # Get their positions that they traded away & traded for
+        # Get Average Points at those positions before & after trade
+        # Output total gain/loss after comparing before and after of each positon
+    
+    def get_avg_pts_at_position_starters (self, roster_id, position, matchups) :
+        print("Get each teams average points per game at a position")
+        # Get all players in starters list
+        # filter by position 
+        # get average
+    
+    def get_avg_pts_at_position_bench (self, roster_id, position, matchups) :
+        print("Get each teams average points per game at a position")
+        # Get all players in bench list
+        # filter by position 
+        # get average
+
+
     """
     def get_league_record(self, roster_id, week, league):
         wins = 0
