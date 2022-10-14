@@ -4,7 +4,8 @@
 ![GitHub license](https://img.shields.io/github/license/mharrison0224/fantasyfootball-sleeperbot-advanced-data)
 # fantasyfootball-sleeperbot-advanced-data
 
-This repo is a simple python script that will pull in your league data from sleeperbot and build out some more advanced data sets to be used however.
+This repo is a simple python script that will pull in your league data from sleeperbot and build out some more advanced data sets to be used however. 
+I'm a very noob python developer, the code looks like a$$ but it works lmao
 
 This program will output the following data:
 
