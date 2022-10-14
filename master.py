@@ -80,6 +80,7 @@ for roster in rosters :
     totalluck = 0
     seasonleaguewins = 0
     seasonleaguelosses = 0
+    sosrank = 0
 
     while count > 0 :
         #print("Getting Luck Rating & League Rating")
@@ -104,6 +105,17 @@ for roster in rosters :
         
         count -= 1
     
+    count = lastweek
+    
+    while count > 0 :
+        print("Getting SOS Data")
+        week = count
+        matchups = league.get_matchups(week)
+        sos = object.get_sos(roster_id, week, league, matchups)
+        print(sos)
+        sosrank += sos
+        count -= 1
+
     # Get Points For/Aginst as well as average points for & against
     ptsfor = (roster["settings"]["fpts"])
     ptsaginst = (roster["settings"]["fpts_against"])
@@ -148,6 +160,7 @@ for roster in rosters :
     item["avg_pts_aginst"] = avgptsaginst 
     item["season_luck"] = seasonluck
     item["week_luck"] = luck
+    item["sos"] = sosrank
 
     # Appened all JSON Items into rosterdata
     rosterdata.append(item)
@@ -315,6 +328,3 @@ if google_integration.lower() == "true" :
         print("Issue getting spreadsheet, not updating google sheets")
 else :
     print("Google Sheets Integration not enabled")
-
-
-
