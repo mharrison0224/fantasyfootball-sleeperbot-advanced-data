@@ -21,7 +21,7 @@ The output will go into the project folder \ output folder where its sorted by w
 
 ## Installation
 
-1. Download the github repository, save the zip file in any location
+1. [Download this github repository](https://github.com/mharrison0224/fantasyfootball-sleeperbot-advanced-data/archive/refs/heads/main.zip) and save the zip file in any location on your computer
 2. Right Click the zip file, extract to any location you'd like
 3. Open any web browser, and go to here: https://www.python.org/downloads/
 4. Download and install python
