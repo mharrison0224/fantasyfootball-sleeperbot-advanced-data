@@ -14,6 +14,7 @@ This program will output the following data:
 4. Median Record (calculate league standings if you enabled the league median)
 5. Average Point For (points for / weeks played)
 6. Average Points Aginst (points against / weeks played)
+7. Calculates strenght of schedule (opponent score ranked 0-X (x = managers - 1) over the season
 
 The output will go into the project folder \ output folder where its sorted by week in a .csv file extention to easily open with notepad, excel, or google sheets.
 
