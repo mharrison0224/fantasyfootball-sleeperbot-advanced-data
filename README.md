@@ -72,11 +72,6 @@ If you want the script to update a google sheet, this section will detail how to
 
 ## How to Run
 
-1. Browse to folder location
-2. Double Click RunMe.bat
-
-or 
-
 1. Open command prompt
 2. CD C:\Location_Of_Project
 3. Type in the following command
