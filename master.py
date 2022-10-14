@@ -44,7 +44,10 @@ response = requests.get("https://api.sleeper.app/v1/state/nfl")
 nflstate = response.json()
 week = nflstate["week"]
 currentweek = nflstate["week"]
-lastweek = week - 1
+if week != 1 :
+    lastweek = week - 1
+if week == 1 :
+    lastweek = week
 
 getusers = requests.get("https://api.sleeper.app/v1/league/%s/users" % league_id)
 users = getusers.json()
@@ -160,7 +163,8 @@ for roster in rosters :
     item["avg_pts_aginst"] = avgptsaginst 
     item["season_luck"] = seasonluck
     item["week_luck"] = luck
-    item["sos"] = sosrank
+    item["sos_value"] = sosrank
+    item["sos"] = "0"
 
     # Appened all JSON Items into rosterdata
     rosterdata.append(item)
@@ -230,6 +234,20 @@ col_list = ["roster_id" , "team_name", "league_record", "pts_for", "league_wins"
 dataFrame = pd.read_csv(csvfile, usecols=col_list)
 dataFrame.sort_values(["league_wins", "pts_for"],axis=0, ascending=False,inplace=True,na_position='first')
 dataFrame.to_csv(league_record_csv)
+
+# Sort by Power Rankings Value, sort by power rankings, append SOS value
+sos_csv = os.path.join(scriptdir, "output", "week%s-SOSRankings.csv" % week) 
+col_list = ["roster_id" , "id", "team_name", "sos", "sos_value", "league_record", "pts_for", "league_wins", "league_losses"]
+dataFrame = pd.read_csv(csvfile, usecols=col_list)
+dataFrame.sort_values(["sos_value"],axis=0, ascending=False,inplace=True,na_position='first')
+sosrankvalue = 1
+for index, data in dataFrame.iterrows() : 
+    print("Adding sosrank to csv")
+    print(index)
+    dataFrame.loc[index, 'sos'] = sosrankvalue
+    sosrankvalue += 1
+
+dataFrame.to_csv(sos_csv)
 
 if discord_integration.lower() == "true" :
     message = ("Data for week " + str(lastweek) + " has finished processing.")
@@ -328,3 +346,6 @@ if google_integration.lower() == "true" :
         print("Issue getting spreadsheet, not updating google sheets")
 else :
     print("Google Sheets Integration not enabled")
+
+
+
